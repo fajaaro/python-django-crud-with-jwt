@@ -10,7 +10,6 @@ repo = UserRepository()
 SECRET_KEY = settings.SECRET_KEY
 
 def generate_token(user):
-
     now = datetime.utcnow()
     access_token = jwt.encode({
         'user_id': user.id, 

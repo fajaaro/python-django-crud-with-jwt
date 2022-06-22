@@ -7,7 +7,7 @@ import json
 repo = ProductRepository()
 
 class ProductController:
-    def index(self, request):
+    def index(self, request, user):
         products = repo.get_all_product(order='desc')
         
         return Response(
@@ -15,7 +15,7 @@ class ProductController:
             message='Success get all product.'
         ).to_json()
 
-    def show(self, request, param_1):
+    def show(self, request, user, param_1):
         slug = param_1
         res = Response()
 
@@ -38,8 +38,9 @@ class ProductController:
 
         return res.to_json()
 
-    def store(self, request):
+    def store(self, request, user):
         payload = json.loads(request.body)
+        payload['author_id'] = user.id
         res = Response()
 
         product = repo.get_product_by_slug(slugify(payload['name']))
@@ -62,7 +63,7 @@ class ProductController:
 
         return res.to_json()
 
-    def update(self, request, param_1):
+    def update(self, request, user, param_1):
         product_id = param_1
         payload = json.loads(request.body)
         res = Response()

@@ -7,6 +7,9 @@ class ProductRepository(Repository):
         order_symbol = '-' if order == "desc" else ''
         return Product.objects.all().order_by(order_symbol + 'id')
 
+    def get_products_by_user(self, user):
+        return user.product_set.all()
+
     def get_product_by_id(self, id):
         return Product.objects.filter(id=id).first()
 
@@ -15,6 +18,7 @@ class ProductRepository(Repository):
 
     def create_product(self, payload):
         product = Product.objects.create(
+            author_id=payload['author_id'],
             name=payload['name'], 
             slug=slugify(payload['name']), 
             price=payload['price']
