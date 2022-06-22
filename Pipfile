@@ -8,6 +8,8 @@ django = "*"
 mysqlclient = "*"
 slugify = "*"
 python-slugify = "*"
+passlib = "*"
+pyjwt = "*"
 
 [dev-packages]
 
