@@ -8,6 +8,7 @@ repo = ProductRepository()
 
 class ProductController:
     def index(self, request):
+        # TODO get all product
         products = repo.get_all_product(order='desc')
         
         return Response(
@@ -19,6 +20,7 @@ class ProductController:
         slug = param_1
         res = Response()
 
+        # TODO get product by slug
         product = None
         try:
             product = repo.get_product_by_slug(slug)
@@ -42,6 +44,7 @@ class ProductController:
         payload = json.loads(request.body)
         res = Response()
 
+        # TODO check by slug if product exists
         product = repo.get_product_by_slug(slugify(payload['name']))
         if product is not None:
             res.success = False
@@ -49,6 +52,7 @@ class ProductController:
             res.status_code = 400
             return res.to_json()
 
+        # TODO create product
         try:
             product = repo.create_product(payload)
             res.data = product.to_json()
@@ -67,6 +71,7 @@ class ProductController:
         payload = json.loads(request.body)
         res = Response()
 
+        # TODO get product
         product = repo.get_product_by_id(product_id)
         if product is None:
             res.success = False
@@ -74,6 +79,7 @@ class ProductController:
             res.status_code = 404
             return res.to_json()
 
+        # TODO update product
         product.name = payload['name']
         product.slug = slugify(payload['name'])
         product.price = payload['price']
