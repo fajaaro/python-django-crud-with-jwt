@@ -7,19 +7,19 @@ import json
 import jwt
 
 repo = UserRepository()
+SECRET_KEY = settings.SECRET_KEY
 
 def generate_token(user):
-    secret_key = settings.SECRET_KEY
 
     now = datetime.utcnow()
     access_token = jwt.encode({
         'user_id': user.id, 
         'exp': now + timedelta(minutes=30)
-    }, secret_key, "HS256")
+    }, SECRET_KEY, 'HS256')
     refresh_token = jwt.encode({
         'user_id': user.id, 
         'exp': now + timedelta(days=30)
-    }, secret_key, "HS256")
+    }, SECRET_KEY, 'HS256')
     
     return access_token, refresh_token
 
@@ -27,14 +27,16 @@ class AuthController:
     def register(self, request):
         payload = json.loads(request.body)
         res = Response()
-
+        
+        # TODO check if email is used or not
         user = repo.get_user_by_email(payload['email'])
         if user is not None:
             res.success = False
-            res.error = "Email is registered."
+            res.error = 'Email is registered.'
             res.status_code = 400
             return res.to_json()
 
+        # TODO create user
         try:
             user = repo.create_user(payload)
             res.data = user.to_json()
@@ -52,6 +54,7 @@ class AuthController:
         payload = json.loads(request.body)
         res = Response()
 
+        # TODO check if user exists
         user = repo.get_user_by_email(payload['email'])
         if user is None:
             res.success = False
@@ -59,28 +62,58 @@ class AuthController:
             res.status_code = 400
             return res.to_json()
 
+        # TODO verify password
         verified = sha256_crypt.verify(payload['password'], user.password)
 
         if verified is True:
+            # TODO update last login time
             user.last_login = datetime.now()
             repo.update(user)
 
+            # TODO generate tokens
             access_token, refresh_token = generate_token(user)
 
             res.data = {
-                "user": user.to_json(),
-                "token": {
-                    "access_token": access_token,
-                    "refresh_token": refresh_token
+                'user': user.to_json(),
+                'token': {
+                    'access_token': access_token,
+                    'refresh_token': refresh_token
                 }
             }
-            res.message = "Login success."
+            res.message = 'Login success.'
             return res.to_json()
         else:
             res.success = False
-            res.error = "Wrong password."
+            res.error = 'Wrong password.'
             res.status_code = 400
             return res.to_json()
 
     def refresh_token(self, request):
-        pass
+        payload = json.loads(request.body)
+        res = Response()
+        
+        refresh_token = payload['refresh_token']
+
+        # TODO decode refresh token
+        try:
+            data = jwt.decode(refresh_token, SECRET_KEY, algorithms=['HS256'])
+        except Exception as e:
+            res.success = False
+            res.error = 'Refresh Token is invalid.'
+            res.status_code = 401
+            return res.to_json()
+
+        # TODO get user
+        user = repo.get_user_by_id(data['user_id'])
+        if user is None:
+            res.success = False
+            res.error = 'Refresh Token is invalid.'
+            res.status_code = 401
+            return res.to_json()
+        
+        # TODO generate new access token
+        access_token, _ = generate_token(user)
+
+        res.data = {'access_token': access_token}
+        res.message = 'Access token has been updated.'
+        return res.to_json()

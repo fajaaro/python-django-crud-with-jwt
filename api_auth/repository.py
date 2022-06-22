@@ -6,6 +6,9 @@ class UserRepository(Repository):
     def get_user_by_email(self, email):
         return User.objects.filter(email=email).first()
 
+    def get_user_by_id(self, id):
+        return User.objects.filter(id=id).first()
+
     def create_user(self, payload):
         user = User.objects.create(
             name=payload['name'], 
