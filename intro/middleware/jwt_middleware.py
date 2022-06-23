@@ -1,6 +1,6 @@
 from functools import wraps
 from django.conf import settings
-from api_auth.repository import UserRepository
+from authentication.repository import UserRepository
 from intro.models.response import Response 
 import jwt
 
