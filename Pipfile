@@ -10,6 +10,7 @@ slugify = "*"
 python-slugify = "*"
 passlib = "*"
 pyjwt = "*"
+psycopg2 = "*"
 
 [dev-packages]
 
