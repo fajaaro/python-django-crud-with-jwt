@@ -9,7 +9,7 @@ def admin(f):
         if user.role != 'admin':
             res.success = False
             res.error = "Unauthorized. Need admin access."
-            res.status_code = 401
+            res.status_code = 403
             return res.to_json()
 
         return f(request, user, *args, **kwargs)
