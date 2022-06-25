@@ -10,8 +10,10 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
-import os
+from dotenv import dotenv_values
 from pathlib import Path
+
+ENV = dotenv_values('.env')
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,10 +23,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-p+-)j&jzzm8-mf0nivt&c9he&649l=(=3s!2%x*0wo-!n8$me9'
+SECRET_KEY = ENV['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = True if ENV['DEBUG'] == 'true' else False
 
 ALLOWED_HOSTS = [
 	'127.0.0.1',
@@ -95,10 +97,10 @@ WSGI_APPLICATION = 'intro.wsgi.application'
 
 DB_POSTGRE = {
     'ENGINE': 'django.db.backends.postgresql_psycopg2',
-    'NAME': os.environ.get('POSTGRES_NAME'), 
-    'USER': os.environ.get('POSTGRES_USER'), 
-    'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
-    'HOST': os.environ.get('POSTGRES_HOST'), 
+    'NAME': ENV['POSTGRES_NAME'], 
+    'USER': ENV['POSTGRES_USER'], 
+    'PASSWORD': ENV['POSTGRES_PASSWORD'],
+    'HOST': ENV['POSTGRES_HOST'], 
     'PORT': '5432',
 }
 
@@ -143,7 +145,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'Asia/Jakarta'
+TIME_ZONE = ENV['TIME_ZONE']
 
 USE_I18N = True
 

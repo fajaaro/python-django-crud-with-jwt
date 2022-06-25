@@ -11,6 +11,7 @@ python-slugify = "*"
 passlib = "*"
 pyjwt = "*"
 psycopg2 = "*"
+python-dotenv = "*"
 
 [dev-packages]
 
